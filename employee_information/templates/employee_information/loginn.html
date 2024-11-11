@@ -1,0 +1,30 @@
+{% extends "employee_information/base.html" %} {% load humanize %} {% block pageContent %}
+{% load crispy_forms_tags %}
+
+<style>
+    .form-group {
+        margin-bottom: 20px; /* Spacing between fields */
+    }
+    button {
+        margin-top: 10px; /* Space above the button */
+        padding: 10px 20px; /* Padding for button */
+        font-size: 16px; /* Font size */
+    }
+</style>
+
+
+<div class="container mt-5">
+    <h2>Login</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {% crispy form %}
+    </form>
+</div>
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endblock pageContent %}

@@ -1,0 +1,56 @@
+{% extends "employee_information/base.html" %}
+{% load humanize %}
+{% block pageContent %}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Supervisor Dashboard</h1>
+    <h2>Timesheets for {{ formatted_date }}</h2>
+
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>Employee</th>
+                <th>Month</th>
+                <th>Days Reported For Work</th>
+                <th>Days Absent from Work</th>
+                <th>Total Hours</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in timesheets %}
+            <tr>
+                <td>{{ item.timesheet.user.username }}</td>
+                <td>{{ item.formatted_month }}</td>
+                <td>{{ item.timesheet.count_reported_days }}</td>
+                <td>{{ item.timesheet.count_non_weekend_absent_days }}</td>
+                <td>
+                    {{ item.timesheet.total_hours }}
+                </td>
+                <td class="{% if item.timesheet.supervisor_approved %}table-success{% else %}table-warning{% endif %}">
+                    {% if item.timesheet.supervisor_approved %}
+                        Approved
+                    {% else %}
+                        Pending
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="POST" action="{% url 'supervisor_approve_timesheet' item.timesheet.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Approve</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">No timesheets available for this month.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock %}

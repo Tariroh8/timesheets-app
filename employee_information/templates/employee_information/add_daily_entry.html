@@ -1,0 +1,11 @@
+{% extends "employee_information/base.html" %} {% load humanize %} {% block pageContent %}
+
+
+    <h1>Add Daily Entry for {{ timesheet.month|date:"F Y" }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Entry</button>
+    </form>
+    <a href="{% url 'timesheet_detail' timesheet.pk %}">Back to Timesheet</a>
+    {% endblock pageContent %}

@@ -1,0 +1,8 @@
+<!-- templates/bootstrap4/whole_uni_form.html -->
+{% load crispy_forms_tags %}
+
+<form method="post" class="form-group">
+    {% csrf_token %}
+    {{ form|crispy }}  <!-- Use crispy to render the form -->
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

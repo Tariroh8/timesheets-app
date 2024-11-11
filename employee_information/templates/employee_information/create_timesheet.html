@@ -1,0 +1,26 @@
+{% extends "employee_information/base.html" %} {% load humanize %} {% block pageContent %}
+{% load crispy_forms_tags %}
+    <h1>Create Timesheet</h1>
+
+    <style>
+        .form-group {
+            margin-bottom: 20px; /* Spacing between fields */
+        }
+        button {
+            margin-top: 10px; /* Space above the button */
+            padding: 10px 20px; /* Padding for button */
+            font-size: 16px; /* Font size */
+        }
+    </style>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="user_display">Time sheet for:</label>
+            <p>{{ form.user_display_name }}</p>  <!-- Display the user's name -->
+            <input type="hidden" name="user" value="{{ form.user.initial.id }}">  <!-- Hidden field for submission -->
+        </div>
+
+        {% crispy form %}
+    </form>
+    {% endblock pageContent %}

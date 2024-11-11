@@ -1,0 +1,38 @@
+{% extends "employee_information/base.html" %} {% load humanize %} {% block pageContent %}
+{% load crispy_forms_tags %}
+
+<div class="container mt-5">
+<h1>Create User</h1>
+
+<style>
+    .form-group {
+        margin-bottom: 20px; /* Spacing between fields */
+    }
+    button {
+        margin-top: 10px; /* Space above the button */
+        padding: 10px 20px; /* Padding for button */
+        font-size: 16px; /* Font size */
+    }
+</style>
+
+<form method="POST">
+    {% csrf_token %}
+    {% crispy form %}
+</form>
+<br>
+{% if form.errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+</div>
+    {% endblock pageContent %}
