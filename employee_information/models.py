@@ -177,14 +177,15 @@ class Timesheet(models.Model):
     def approve_by_finance_manager(self):
         print(f"Approving timesheet ID: {self.id} for user: {self.user.username}")
         self.finance_manager_approved = True
-        self.approved_at = timezone.now()  # Set approved timestamp
+        self.save() # Set approved timestamp
         #Timesheet.objects.filter(id=self.id).update(finance_manager_approved=True, approved_at=self.approved_at)  # Use update to bypass save method
         print(f"Timesheet ID: {self.id} approved. Finance Approved Status: {self.finance_manager_approved}")
         
 
     def approve_by_hr(self):
-        if self.finance_manager_approved:  # Ensure it has been approved by finance manager first
-            self.hr_approved = True
+        print(f"Approving timesheet ID: {self.id} for user: {self.user.username}")
+        self.hr_approved = True
+        self.save() 
             #self.save()
 
     def __str__(self):
