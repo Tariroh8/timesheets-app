@@ -1,0 +1,15 @@
+{% extends "employee_information/base.html" %} {% load humanize %} {% block pageContent %}
+{% block navigation %} {% endblock navigation %}
+
+<div class="container mt-5 text-center">
+    <h1 class="display-4">Welcome to the Timesheet App</h1>
+
+    <div class="mt-4">
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg mx-2">Login</a>
+        <hr class="my-4">
+        <p>Don't have an account?</p>
+        <a href="{% url 'signup' %}" class="btn btn-success btn-lg mx-2">Sign Up</a>
+    </div>
+
+</div>
+    {% endblock pageContent %}

@@ -29,6 +29,8 @@ from django.utils import timezone
 
 ]"""
 # Login
+def landing_page(request):
+    return render(request, 'employee_information/landing_page.html')
 
 
 def signup_view(request):
@@ -167,9 +169,18 @@ def supervisor_dashboard(request):
         for timesheet in timesheets
     ]
 
+    # Calculate totals
+    total_timesheets = len(formatted_timesheets)
+    approved_timesheets = sum(1 for item in formatted_timesheets if item['timesheet'].supervisor_approved)
+    not_approved_timesheets = total_timesheets - approved_timesheets
+
+    # Render the template with context
     return render(request, 'employee_information/sdashboard.html', {
         'timesheets': formatted_timesheets,
-        'formatted_date': formatted_date  # Pass the formatted date to the template
+        'formatted_date': formatted_date,  # Pass the formatted date to the template
+        'total_timesheets': total_timesheets,
+        'approved_timesheets': approved_timesheets,
+        'not_approved_timesheets': not_approved_timesheets,
     })
 
 @login_required
@@ -198,9 +209,16 @@ def financial_manager_dashboard(request):
         for timesheet in timesheets
     ]
 
+    total_timesheets = len(formatted_timesheets)
+    approved_timesheets = sum(1 for item in formatted_timesheets if item['timesheet'].finance_manager_approved)
+    not_approved_timesheets = total_timesheets - approved_timesheets
+
     return render(request, 'employee_information/financial_manager_dashboard.html', {
         'timesheets': formatted_timesheets,
-        'formatted_date': formatted_date  # Pass the formatted date to the template
+        'formatted_date': formatted_date,  # Pass the formatted date to the template
+        'total_timesheets': total_timesheets,
+        'approved_timesheets': approved_timesheets,
+        'not_approved_timesheets': not_approved_timesheets,
     })
 
 

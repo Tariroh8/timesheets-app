@@ -5,7 +5,13 @@
 <div class="container mt-4">
     <h1 class="mb-4">Supervisor Dashboard</h1>
     <h2>Timesheets for {{ formatted_date }}</h2>
-
+    <hr><hr>
+    <div class="mb-4">
+        <p><strong>Total Timesheets: </strong>{{ total_timesheets }}</p>
+        <p><strong>Approved Timesheets: </strong>{{ approved_timesheets }}</p>
+        <p><strong>Not Approved Timesheets: </strong>{{ not_approved_timesheets }}</p>
+    </div>
+    <hr><hr>
     <table class="table table-bordered">
         <thead class="thead-light">
             <tr>

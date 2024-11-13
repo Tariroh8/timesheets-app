@@ -24,6 +24,7 @@ urlpatterns = [
     #path('save_employee', views.save_employee, name="save-employee-page"),
     #path('delete_employee', views.delete_employee, name="delete-employee"),
     #path('view_employee', views.view_employee, name="view-employee-page"),
+    path('', views.landing_page, name='landing_page'),
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
     path('create_timesheet/', views.create_timesheet, name='create_timesheet'),
