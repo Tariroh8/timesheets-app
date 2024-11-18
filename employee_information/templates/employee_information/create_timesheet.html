@@ -1,6 +1,8 @@
 {% extends "employee_information/base.html" %} {% load humanize %} {% block pageContent %}
 {% load crispy_forms_tags %}
-    <h1>Create Timesheet</h1>
+<center><h1>{{ user.firstname }} {{ user.lastname }}</h1></center>
+<br><hr>
+    <h2>Create Timesheet</h2>
 
     <style>
         .form-group {
@@ -13,14 +15,9 @@
         }
     </style>
     <form method="POST">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="user_display">Time sheet for:</label>
-            <p>{{ form.user_display_name }}</p>  <!-- Display the user's name -->
-            <input type="hidden" name="user" value="{{ form.user.initial.id }}">  <!-- Hidden field for submission -->
-        </div>
 
+        {% csrf_token %}
         {% crispy form %}
+       
     </form>
     {% endblock pageContent %}

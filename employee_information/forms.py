@@ -8,7 +8,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Department, Position, Role
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit
+from crispy_forms.layout import Layout, Submit, Hidden, Field
 
 class CustomUserCreationForm(UserCreationForm):
     firstname = forms.CharField(max_length=30, label='First Name')
@@ -82,22 +82,31 @@ class CustomLoginForm(AuthenticationForm):
 
 
 class TimesheetForm(forms.ModelForm):
+    month = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        label="Select Month",
+        input_formats=['%Y-%m-%d']  # Accept the date format
+    )
+
     class Meta:
         model = Timesheet
-        fields = ['user', 'month']
+        fields = ['month']  # Only include the month field
 
     def __init__(self, *args, **kwargs):
-        super(TimesheetForm, self).__init__(*args, **kwargs)
+        user = kwargs.pop('user', None)  # Pop the user from kwargs
+        super(TimesheetForm, self).__init__(*args, **kwargs)  # Initialize the parent class
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            'user',  # User field will be displayed but disabled
-            'month',
+            Field('month'),  # Display the month (date) field
             Submit('submit', 'Submit Timesheet')  # Add a submit button
         )
 
-        # Disable the user field
-        self.fields['user'].widget.attrs['disabled'] = 'disabled' 
-        
+        # Optional: If you want to display user information in some way
+        if user:
+            # Add any user-related logic here if needed
+            # For example, you could store the user information in an instance variable
+            self.user = user  # Store it for later use if needed
+
 class DailyEntryForm(forms.ModelForm):
     class Meta:
         model = DailyEntry

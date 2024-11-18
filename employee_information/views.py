@@ -82,25 +82,36 @@ def login_view(request):
 @login_required
 def create_timesheet(request):
     if request.method == 'POST':
-        form = TimesheetForm(request.POST)
+        form = TimesheetForm(request.POST, user=request.user)  # Pass the logged-in user
         if form.is_valid():
-            # Attempt to save the timesheet; it will return an existing one if found
-            timesheet = Timesheet(user=request.user, month=form.cleaned_data['month'])
-            existing_timesheet = timesheet.save()  # This could be an existing timesheet
-            
-            if isinstance(existing_timesheet, Timesheet):
-                # If we received an existing timesheet, redirect to its detail view
-                messages.info(request, f"A timesheet already exists for {request.user.username} for {existing_timesheet.month.strftime('%B %Y')}.")
-                return redirect('timesheet_detail', pk=existing_timesheet.pk)
+            date = form.cleaned_data['month']
+            if date:
+                # Check for existing timesheet logic
+                existing_timesheet = Timesheet.objects.filter(
+                    user=request.user,
+                    month__year=date.year,
+                    month__month=date.month
+                ).first()
 
-            # If a new timesheet was created, redirect to its detail view
-            messages.success(request, "Timesheet created successfully.")
-            return redirect('timesheet_detail', pk=timesheet.pk)
-
+                if existing_timesheet:
+                    messages.info(request, f"A timesheet already exists for {request.user.username} for {existing_timesheet.month.strftime('%B %Y')}.")
+                    return redirect('timesheet_detail', pk=existing_timesheet.pk)
+                else:
+                    # Create a new Timesheet instance
+                    timesheet = Timesheet(user=request.user, month=date)
+                    timesheet.save()
+                    messages.success(request, "Timesheet created successfully.")
+                    return redirect('timesheet_detail', pk=timesheet.pk)
+            else:
+                messages.error(request, "Invalid date provided.")
     else:
-        form = TimesheetForm(initial={'user': request.user})  # Pre-fill user field if needed
+        form = TimesheetForm(user=request.user)  # Pass the logged-in user on GET
 
-    return render(request, 'employee_information/create_timesheet.html', {'form': form})
+    return render(request, 'employee_information/create_timesheet.html', {
+        'form': form,
+        'user': request.user
+    })
+
 
 @login_required
 def timesheet_detail(request, pk):
@@ -149,16 +160,20 @@ def add_daily_entry(request, timesheet_pk):
 
 @login_required
 def supervisor_dashboard(request):
-    # Get the current month
+    # Get the current month and year
     today = timezone.now()
     current_month = today.month
     current_year = today.year
 
-    # Format the date for display
-    timesheets = Timesheet.objects.filter( month__year=current_year, month__month=current_month)
+    # Get month and year from GET parameters if provided
+    month = request.GET.get('month', current_month)
+    year = request.GET.get('year', current_year)
+
+    # Filter timesheets for the specified month and year
+    timesheets = Timesheet.objects.filter(month__year=year, month__month=month)
 
     # Format the date for display
-    formatted_date = today.strftime('%B %Y')
+    formatted_date = timezone.datetime(year, month, 1).strftime('%B %Y')
 
     # Prepare the timesheets with formatted month
     formatted_timesheets = [
@@ -177,12 +192,14 @@ def supervisor_dashboard(request):
     # Render the template with context
     return render(request, 'employee_information/sdashboard.html', {
         'timesheets': formatted_timesheets,
-        'formatted_date': formatted_date,  # Pass the formatted date to the template
+        'formatted_date': formatted_date,
         'total_timesheets': total_timesheets,
         'approved_timesheets': approved_timesheets,
         'not_approved_timesheets': not_approved_timesheets,
+        'current_month': current_month,
+        'current_year': current_year,
     })
-
+    
 @login_required
 def financial_manager_dashboard(request):
     # Get the current month and year
